@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Register | NG Artivo</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        .register-page {
+            min-height: 100vh;
+            padding: 120px 20px 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .register-box {
+            width: 100%;
+            max-width: 750px;
+            padding: 40px;
+            border-radius: 25px;
+            background: rgba(25, 5, 45, 0.9);
+            border: 1px solid rgba(255, 50, 200, 0.25);
+            box-shadow: 0 0 45px rgba(170, 0, 255, 0.25);
+        }
+
+        .register-title {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .register-title p {
+            color: #ff4fd8;
+            letter-spacing: 2px;
+            font-size: 13px;
+        }
+
+        .register-title h1 {
+            color: white;
+            font-size: 38px;
+            margin: 10px 0;
+        }
+
+        .register-title h1 span {
+            color: #ff4fd8;
+        }
+
+        .register-title div {
+            color: #bcaec5;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: white;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 14px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            outline: none;
+            background: #12001f;
+            color: white;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #ff4fd8;
+            box-shadow: 0 0 12px rgba(255, 79, 216, 0.15);
+        }
+
+        .form-group textarea {
+            min-height: 130px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            width: 100%;
+            border: none;
+            padding: 15px;
+            border-radius: 30px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            background: linear-gradient(90deg, #8a2be2, #ff1493);
+            transition: 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 20, 147, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: wait;
+            transform: none;
+        }
+
+        .back-home {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #cbb9d5;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-home:hover {
+            color: #ff4fd8;
+        }
+
+
+        /* ========================================
+           SUCCESS MESSAGE
+        ======================================== */
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 45px 25px;
+            border-radius: 22px;
+            background: #eafff0;
+            border: 1px solid #8ee0aa;
+            box-shadow: 0 12px 35px rgba(50, 200, 100, 0.18);
+            animation: successPop 0.45s ease;
+        }
+
+        .success-icon {
+            width: 75px;
+            height: 75px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #32c765;
+            color: white;
+            font-size: 42px;
+            font-weight: bold;
+            box-shadow: 0 8px 25px rgba(50, 199, 101, 0.30);
+        }
+
+        .success-message h2 {
+            margin: 0 0 12px;
+            color: #16803c;
+            font-size: 26px;
+        }
+
+        .success-message p {
+            margin: 0 auto 25px;
+            max-width: 520px;
+            color: #39704d;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .new-request-btn {
+            border: none;
+            padding: 13px 28px;
+            border-radius: 30px;
+            background: linear-gradient(90deg, #8a2be2, #ff1493);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .new-request-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 20, 147, 0.25);
+        }
+
+        @keyframes successPop {
+
+            from {
+                opacity: 0;
+                transform: scale(0.94);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+        }
+
+
+        @media (max-width: 650px) {
+
+            .register-page {
+                padding: 100px 15px 40px;
+            }
+
+            .register-box {
+                padding: 25px 18px;
+            }
+
+            .register-title h1 {
+                font-size: 30px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .success-message {
+                padding: 35px 18px;
+            }
+
+            .success-message h2 {
+                font-size: 22px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <section class="register-page">
+
+        <div class="register-box">
+
+
+            <!-- ========================================
+                 REGISTRATION FORM
+            ======================================== -->
+
+            <div id="registrationArea">
+
+                <div class="register-title">
+
+                    <p>
+                        START YOUR PROJECT
+                    </p>
+
+                    <h1>
+                        Register With
+                        <span>NG Artivo</span>
+                    </h1>
+
+                    <div>
+                        Tell us about yourself and what you want us to create.
+                    </div>
+
+                </div>
+
+
+                <form
+                    id="registerForm"
+                    action="/register"
+                    method="POST"
+                    enctype="multipart/form-data"
+                >
+
+
+                    <div class="form-row">
+
+                        <div class="form-group">
+
+                            <label>
+                                Full Name *
+                            </label>
+
+                            <input
+                                type="text"
+                                name="name"
+                                placeholder="Enter your name"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Email *
+                            </label>
+
+                            <input
+                                type="email"
+                                name="email"
+                                placeholder="Enter your email"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-row">
+
+                        <div class="form-group">
+
+                            <label>
+                                Phone Number *
+                            </label>
+
+                            <input
+                                type="tel"
+                                name="phone"
+                                placeholder="Enter your phone number"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                City
+                            </label>
+
+                            <input
+                                type="text"
+                                name="city"
+                                placeholder="Enter your city"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Business / Brand Name
+                        </label>
+
+                        <input
+                            type="text"
+                            name="business"
+                            placeholder="Enter your business or brand name"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            What service do you need? *
+                        </label>
+
+                        <select
+                            name="service"
+                            required
+                        >
+
+                            <option value="">
+                                Select a service
+                            </option>
+
+                            <option value="Graphic Design">
+                                Graphic Design
+                            </option>
+
+                            <option value="Poster Design">
+                                Poster Design
+                            </option>
+
+                            <option value="Social Media Design">
+                                Social Media Design
+                            </option>
+
+                            <option value="Branding">
+                                Branding
+                            </option>
+
+                            <option value="Logo Design">
+                                Logo Design
+                            </option>
+
+                            <option value="Other">
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            What do you want us to create? *
+                        </label>
+
+                        <textarea
+                            name="project_details"
+                            placeholder="Tell us what you want, your idea, requirements, size, colors, text, etc."
+                            required
+                        ></textarea>
+
+                    </div>
+
+
+                    <div class="form-row">
+
+                        <div class="form-group">
+
+                            <label>
+                                Budget
+                            </label>
+
+                            <select name="budget">
+
+                                <option value="">
+                                    Select budget
+                                </option>
+
+                                <option value="Below ₹1,000">
+                                    Below ₹1,000
+                                </option>
+
+                                <option value="₹1,000 - ₹3,000">
+                                    ₹1,000 - ₹3,000
+                                </option>
+
+                                <option value="₹3,000 - ₹5,000">
+                                    ₹3,000 - ₹5,000
+                                </option>
+
+                                <option value="₹5,000 - ₹10,000">
+                                    ₹5,000 - ₹10,000
+                                </option>
+
+                                <option value="Above ₹10,000">
+                                    Above ₹10,000
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Required Deadline
+                            </label>
+
+                            <input
+                                type="date"
+                                name="deadline"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Upload Reference Image / File
+                        </label>
+
+                        <input
+                            type="file"
+                            name="reference"
+                            accept="image/*,.pdf"
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="submit-btn"
+                        id="submitButton"
+                    >
+                        Submit Project Request →
+                    </button>
+
+                </form>
+
+
+                <a
+                    href="/"
+                    class="back-home"
+                >
+                    ← Back to Home
+                </a>
+
+            </div>
+
+
+            <!-- ========================================
+                 SUCCESS MESSAGE
+            ======================================== -->
+
+            <div
+                class="success-message"
+                id="successMessage"
+            >
+
+                <div class="success-icon">
+                    ✓
+                </div>
+
+                <h2>
+                    Project Request Submitted Successfully!
+                </h2>
+
+                <p>
+                    Thank you for choosing NG Artivo.
+                    We have received your project request
+                    and will get back to you soon.
+                </p>
+
+                <button
+                    type="button"
+                    class="new-request-btn"
+                    onclick="showNewRequest()"
+                >
+                    Submit Another Request
+                </button>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+    <script>
+
+        const form =
+            document.getElementById("registerForm");
+
+        const registrationArea =
+            document.getElementById("registrationArea");
+
+        const successMessage =
+            document.getElementById("successMessage");
+
+        const submitButton =
+            document.getElementById("submitButton");
+
+
+        form.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                submitButton.disabled = true;
+
+                submitButton.textContent =
+                    "Submitting...";
+
+
+                try {
+
+                    const formData =
+                        new FormData(form);
+
+
+                    const response =
+                        await fetch(
+                            "/register",
+                            {
+                                method: "POST",
+                                body: formData
+                            }
+                        );
+
+
+                    const result =
+                        await response.json();
+
+
+                    if (result.success) {
+
+                        registrationArea.style.display =
+                            "none";
+
+                        successMessage.style.display =
+                            "block";
+
+                        window.scrollTo({
+                            top: 0,
+                            behavior: "smooth"
+                        });
+
+                    }
+
+                    else {
+
+                        alert(
+                            result.message ||
+                            "Registration failed. Please try again."
+                        );
+
+                        submitButton.disabled =
+                            false;
+
+                        submitButton.textContent =
+                            "Submit Project Request →";
+
+                    }
+
+                }
+
+                catch (error) {
+
+                    console.error(
+                        "Registration error:",
+                        error
+                    );
+
+                    alert(
+                        "Something went wrong. Please try again."
+                    );
+
+                    submitButton.disabled =
+                        false;
+
+                    submitButton.textContent =
+                        "Submit Project Request →";
+
+                }
+
+            }
+        );
+
+
+        function showNewRequest() {
+
+            form.reset();
+
+            successMessage.style.display =
+                "none";
+
+            registrationArea.style.display =
+                "block";
+
+            submitButton.disabled =
+                false;
+
+            submitButton.textContent =
+                "Submit Project Request →";
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+
+        }
+
+    </script>
+
+</body>
+
+</html>

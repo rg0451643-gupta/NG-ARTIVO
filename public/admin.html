@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NG Artivo | Admin Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #08000f;
+            color: #eee5f4;
+            min-height: 100vh;
+        }
+
+        /* LOGIN */
+
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background:
+                radial-gradient(
+                    circle at 20% 20%,
+                    rgba(139, 53, 255, 0.18),
+                    transparent 35%
+                ),
+                radial-gradient(
+                    circle at 80% 70%,
+                    rgba(255, 63, 190, 0.12),
+                    transparent 35%
+                ),
+                #08000f;
+        }
+
+        .login-box {
+            width: 100%;
+            max-width: 420px;
+            padding: 40px;
+            border-radius: 24px;
+            background: rgba(25, 7, 40, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 35px;
+        }
+
+        .logo span {
+            color: #ff3fbe;
+        }
+
+        .login-box h1 {
+            color: white;
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .login-box > p {
+            text-align: center;
+            color: #a99caf;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: white;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            outline: none;
+            background: #12001f;
+            color: white;
+            font-size: 15px;
+        }
+
+        input:focus {
+            border-color: #ff3fbe;
+            box-shadow: 0 0 12px rgba(255, 63, 190, 0.15);
+        }
+
+        .login-btn {
+            width: 100%;
+            border: none;
+            padding: 15px;
+            border-radius: 30px;
+            background: linear-gradient(
+                135deg,
+                #8b35ff,
+                #ff3fbe
+            );
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .login-btn:hover {
+            box-shadow:
+                0 10px 30px rgba(255, 63, 190, 0.25);
+        }
+
+        .error {
+            display: none;
+            color: #ff6b9d;
+            background: rgba(255, 0, 100, 0.08);
+            border: 1px solid rgba(255, 0, 100, 0.15);
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 18px;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        /* DASHBOARD */
+
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 72px;
+            padding: 0 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(8, 0, 15, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            backdrop-filter: blur(15px);
+        }
+
+        .topbar-logo {
+            font-size: 21px;
+            font-weight: bold;
+        }
+
+        .topbar-logo span {
+            color: #ff3fbe;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-badge {
+            color: #cfc1d5;
+            font-size: 13px;
+        }
+
+        .logout-btn {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04);
+            color: white;
+            padding: 9px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            border-color: #ff3fbe;
+        }
+
+        .dashboard-content {
+            padding: 40px 5%;
+        }
+
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-header h1 {
+            color: white;
+            font-size: 32px;
+        }
+
+        .dashboard-header p {
+            color: #a99caf;
+            margin-top: 7px;
+            font-size: 14px;
+        }
+
+        .refresh-btn {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04);
+            color: white;
+            padding: 11px 17px;
+            border-radius: 22px;
+            cursor: pointer;
+        }
+
+        /* STATS */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            padding: 22px;
+            border-radius: 18px;
+            background: rgba(25, 7, 40, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .stat-card span {
+            color: #a99caf;
+            font-size: 12px;
+        }
+
+        .stat-card strong {
+            display: block;
+            color: white;
+            font-size: 28px;
+            margin-top: 8px;
+        }
+
+        /* REQUESTS */
+
+        .requests {
+            display: grid;
+            gap: 18px;
+        }
+
+        .request-card {
+            padding: 25px;
+            border-radius: 20px;
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(35, 10, 52, 0.85),
+                    rgba(16, 2, 25, 0.85)
+                );
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .request-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .customer-name {
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .request-id {
+            color: #817287;
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
+        .status {
+            height: fit-content;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            background: rgba(255, 63, 190, 0.1);
+            color: #ff75d4;
+        }
+
+        .request-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .info {
+            padding: 15px;
+            border-radius: 13px;
+            background: rgba(255, 255, 255, 0.025);
+        }
+
+        .info.full {
+            grid-column: 1 / -1;
+        }
+
+        .info-label {
+            display: block;
+            color: #786b80;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 7px;
+        }
+
+        .info-value {
+            color: #eee5f4;
+            font-size: 13px;
+            line-height: 1.6;
+            word-break: break-word;
+        }
+
+        .request-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+
+        .status-select {
+            background: #12001f;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            outline: none;
+        }
+
+        .file-btn {
+            display: inline-block;
+            padding: 10px 15px;
+            border-radius: 10px;
+            background: linear-gradient(
+                135deg,
+                #8b35ff,
+                #ff3fbe
+            );
+            color: white;
+            font-size: 12px;
+            text-decoration: none;
+        }
+
+        .empty {
+            padding: 50px;
+            text-align: center;
+            color: #8c7e94;
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+        }
+
+        .loading {
+            text-align: center;
+            color: #a99caf;
+            padding: 40px;
+        }
+
+        @media (max-width: 900px) {
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .request-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .login-box {
+                padding: 30px 22px;
+            }
+
+            .dashboard-content {
+                padding: 30px 4%;
+            }
+
+            .dashboard-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .request-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .info.full {
+                grid-column: auto;
+            }
+
+            .admin-badge {
+                display: none;
+            }
+
+            .topbar {
+                padding: 0 4%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- LOGIN -->
+
+    <section class="login-page" id="loginPage">
+
+        <div class="login-box">
+
+            <div class="logo">
+                NG<span>Artivo</span>
+            </div>
+
+            <h1>Admin Login</h1>
+
+            <p>
+                Private dashboard for NG Artivo
+            </p>
+
+            <div class="error" id="loginError"></div>
+
+            <form id="loginForm">
+
+                <div class="form-group">
+
+                    <label>
+                        Admin Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Enter admin password"
+                        required
+                    >
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="login-btn"
+                >
+                    Login to Dashboard
+                </button>
+
+            </form>
+
+        </div>
+
+    </section>
+
+
+    <!-- DASHBOARD -->
+
+    <section class="dashboard" id="dashboard">
+
+        <header class="topbar">
+
+            <div class="topbar-logo">
+                NG<span>Artivo</span>
+            </div>
+
+            <div class="topbar-right">
+
+                <span class="admin-badge">
+                    Admin Dashboard
+                </span>
+
+                <button
+                    class="logout-btn"
+                    id="logoutBtn"
+                >
+                    Logout
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <main class="dashboard-content">
+
+            <div class="dashboard-header">
+
+                <div>
+
+                    <h1>Project Requests</h1>
+
+                    <p>
+                        Manage your customer project requests.
+                    </p>
+
+                </div>
+
+                <button
+                    class="refresh-btn"
+                    id="refreshBtn"
+                >
+                    ↻ Refresh
+                </button>
+
+            </div>
+
+
+            <!-- STATS -->
+
+            <div class="stats">
+
+                <div class="stat-card">
+
+                    <span>Total Requests</span>
+
+                    <strong id="totalCount">
+                        0
+                    </strong>
+
+                </div>
+
+                <div class="stat-card">
+
+                    <span>New</span>
+
+                    <strong id="newCount">
+                        0
+                    </strong>
+
+                </div>
+
+                <div class="stat-card">
+
+                    <span>In Progress</span>
+
+                    <strong id="progressCount">
+                        0
+                    </strong>
+
+                </div>
+
+                <div class="stat-card">
+
+                    <span>Completed</span>
+
+                    <strong id="completedCount">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- REQUESTS -->
+
+            <div
+                class="requests"
+                id="requests"
+            >
+
+                <div class="loading">
+                    Loading project requests...
+                </div>
+
+            </div>
+
+        </main>
+
+    </section>
+
+
+    <script>
+
+        const loginPage =
+            document.getElementById("loginPage");
+
+        const dashboard =
+            document.getElementById("dashboard");
+
+        const loginForm =
+            document.getElementById("loginForm");
+
+        const loginError =
+            document.getElementById("loginError");
+
+        const requests =
+            document.getElementById("requests");
+
+
+        // ================================
+        // CHECK LOGIN
+        // ================================
+
+        async function checkLogin() {
+
+            try {
+
+                const response =
+                    await fetch("/admin/check");
+
+                const data =
+                    await response.json();
+
+                if (data.loggedIn) {
+
+                    showDashboard();
+
+                }
+
+            } catch (error) {
+
+                console.error(error);
+
+            }
+        }
+
+
+        // ================================
+        // SHOW DASHBOARD
+        // ================================
+
+        function showDashboard() {
+
+            loginPage.style.display = "none";
+
+            dashboard.style.display = "block";
+
+            loadRequests();
+        }
+
+
+        // ================================
+        // LOGIN
+        // ================================
+
+        loginForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+                loginError.style.display = "none";
+
+                const password =
+                    document.getElementById(
+                        "password"
+                    ).value;
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "/admin/login",
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body: JSON.stringify({
+                                    password
+                                })
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        loginError.textContent =
+                            data.message ||
+                            "Login failed.";
+
+                        loginError.style.display =
+                            "block";
+
+                        return;
+                    }
+
+
+                    showDashboard();
+
+
+                } catch (error) {
+
+                    loginError.textContent =
+                        "Could not connect to server.";
+
+                    loginError.style.display =
+                        "block";
+                }
+
+            }
+        );
+
+
+        // ================================
+        // LOAD REQUESTS
+        // ================================
+
+        async function loadRequests() {
+
+            requests.innerHTML =
+                `<div class="loading">
+                    Loading project requests...
+                </div>`;
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/admin/users"
+                    );
+
+
+                if (response.status === 401) {
+
+                    window.location.reload();
+
+                    return;
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                if (!data.success) {
+
+                    requests.innerHTML =
+                        `<div class="empty">
+                            Could not load requests.
+                        </div>`;
+
+                    return;
+                }
+
+
+                updateStats(data.users);
+
+                renderRequests(data.users);
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                requests.innerHTML =
+                    `<div class="empty">
+                        Server connection failed.
+                    </div>`;
+            }
+        }
+
+
+        // ================================
+        // STATS
+        // ================================
+
+        function updateStats(users) {
+
+            document.getElementById(
+                "totalCount"
+            ).textContent = users.length;
+
+
+            document.getElementById(
+                "newCount"
+            ).textContent =
+                users.filter(
+                    user => user.status === "New"
+                ).length;
+
+
+            document.getElementById(
+                "progressCount"
+            ).textContent =
+                users.filter(
+                    user =>
+                        user.status === "In Progress"
+                ).length;
+
+
+            document.getElementById(
+                "completedCount"
+            ).textContent =
+                users.filter(
+                    user =>
+                        user.status === "Completed"
+                ).length;
+        }
+
+
+        // ================================
+        // RENDER REQUESTS
+        // ================================
+
+        function renderRequests(users) {
+
+            if (!users.length) {
+
+                requests.innerHTML =
+                    `<div class="empty">
+                        No project requests yet.
+                    </div>`;
+
+                return;
+            }
+
+
+            requests.innerHTML =
+                users.map(user => {
+
+                    const reference =
+                        user.reference_file
+                            ? `
+                                <a
+                                    class="file-btn"
+                                    href="/admin/reference/${encodeURIComponent(user.reference_file)}"
+                                    target="_blank"
+                                >
+                                    View Reference File
+                                </a>
+                            `
+                            : `
+                                <span
+                                    style="color:#786b80;font-size:12px"
+                                >
+                                    No file uploaded
+                                </span>
+                            `;
+
+
+                    return `
+
+                        <article
+                            class="request-card"
+                        >
+
+                            <div
+                                class="request-top"
+                            >
+
+                                <div>
+
+                                    <div
+                                        class="customer-name"
+                                    >
+                                        ${escapeHTML(user.name)}
+                                    </div>
+
+                                    <div
+                                        class="request-id"
+                                    >
+                                        Request #${user.id}
+                                        ·
+                                        ${formatDate(user.created_at)}
+                                    </div>
+
+                                </div>
+
+                                <span
+                                    class="status"
+                                >
+                                    ${escapeHTML(user.status)}
+                                </span>
+
+                            </div>
+
+
+                            <div
+                                class="request-grid"
+                            >
+
+                                ${info(
+                                    "Email",
+                                    user.email
+                                )}
+
+                                ${info(
+                                    "Phone",
+                                    user.phone
+                                )}
+
+                                ${info(
+                                    "City",
+                                    user.city
+                                )}
+
+                                ${info(
+                                    "Business / Brand",
+                                    user.business
+                                )}
+
+                                ${info(
+                                    "Service",
+                                    user.service
+                                )}
+
+                                ${info(
+                                    "Budget",
+                                    user.budget
+                                )}
+
+                                ${info(
+                                    "Deadline",
+                                    user.deadline
+                                )}
+
+                                ${info(
+                                    "Number of Designs",
+                                    user.number_of_designs
+                                )}
+
+                                ${info(
+                                    "Platform / Size",
+                                    user.platform_size
+                                )}
+
+                                ${info(
+                                    "Project Details",
+                                    user.project_details,
+                                    true
+                                )}
+
+                                ${info(
+                                    "Additional Notes",
+                                    user.additional_notes,
+                                    true
+                                )}
+
+                            </div>
+
+
+                            <div
+                                class="request-actions"
+                            >
+
+                                <select
+                                    class="status-select"
+                                    onchange="updateStatus(
+                                        ${user.id},
+                                        this.value
+                                    )"
+                                >
+
+                                    <option
+                                        ${user.status === "New" ? "selected" : ""}
+                                    >
+                                        New
+                                    </option>
+
+                                    <option
+                                        ${user.status === "In Progress" ? "selected" : ""}
+                                    >
+                                        In Progress
+                                    </option>
+
+                                    <option
+                                        ${user.status === "Completed" ? "selected" : ""}
+                                    >
+                                        Completed
+                                    </option>
+
+                                    <option
+                                        ${user.status === "Cancelled" ? "selected" : ""}
+                                    >
+                                        Cancelled
+                                    </option>
+
+                                </select>
+
+                                ${reference}
+
+                            </div>
+
+                        </article>
+
+                    `;
+
+                }).join("");
+        }
+
+
+        // ================================
+        // INFO BOX
+        // ================================
+
+        function info(
+            label,
+            value,
+            full = false
+        ) {
+
+            return `
+
+                <div
+                    class="info ${full ? "full" : ""}"
+                >
+
+                    <span
+                        class="info-label"
+                    >
+                        ${label}
+                    </span>
+
+                    <div
+                        class="info-value"
+                    >
+                        ${escapeHTML(
+                            value || "Not provided"
+                        )}
+                    </div>
+
+                </div>
+            `;
+        }
+
+
+        // ================================
+        // UPDATE STATUS
+        // ================================
+
+        async function updateStatus(
+            id,
+            status
+        ) {
+
+            try {
+
+                const response =
+                    await fetch(
+                        `/admin/users/${id}/status`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                status
+                            })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    alert(
+                        data.message ||
+                        "Could not update status."
+                    );
+
+                    return;
+                }
+
+
+                loadRequests();
+
+
+            } catch (error) {
+
+                alert(
+                    "Server connection failed."
+                );
+            }
+        }
+
+
+        // ================================
+        // LOGOUT
+        // ================================
+
+        document
+            .getElementById("logoutBtn")
+            .addEventListener(
+                "click",
+                async () => {
+
+                    await fetch(
+                        "/admin/logout",
+                        {
+                            method: "POST"
+                        }
+                    );
+
+                    window.location.reload();
+
+                }
+            );
+
+
+        // ================================
+        // REFRESH
+        // ================================
+
+        document
+            .getElementById("refreshBtn")
+            .addEventListener(
+                "click",
+                loadRequests
+            );
+
+
+        // ================================
+        // HELPERS
+        // ================================
+
+        function escapeHTML(value) {
+
+            return String(value ?? "")
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+        }
+
+
+        function formatDate(value) {
+
+            if (!value) {
+                return "Unknown date";
+            }
+
+            const date =
+                new Date(
+                    value.replace(" ", "T") + "Z"
+                );
+
+            if (
+                Number.isNaN(
+                    date.getTime()
+                )
+            ) {
+
+                return value;
+            }
+
+            return date.toLocaleString();
+        }
+
+
+        // Start
+
+        checkLogin();
+
+    </script>
+
+</body>
+
+</html>
