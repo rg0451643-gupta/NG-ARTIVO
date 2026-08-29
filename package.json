@@ -1,9 +1,10 @@
 {
   "name": "ng-artivo",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "NG Artivo website",
+  "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -11,9 +12,9 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "express": "^5.2.1",
-    "express-session": "^1.19.0",
-    "multer": "^2.3.0",
-    "sqlite3": "^6.0.1"
+    "express": "^4.21.2",
+    "express-session": "^1.18.2",
+    "multer": "^2.0.2",
+    "sqlite3": "^5.1.7"
   }
 }
