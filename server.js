@@ -1,42 +1,91 @@
 const express = require("express");
 const path = require("path");
-const sqlite3 = require("sqlite3").verbose();
+const mongoose = require("mongoose");
 const multer = require("multer");
 const session = require("express-session");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // ========================================
-// DATABASE
+// MONGODB CONNECTION
 // ========================================
 
-const db = new sqlite3.Database("./database.db");
+const mongoURI = process.env.MONGODB_URI;
 
-db.serialize(() => {
+if (!mongoURI) {
+    console.error("MONGODB_URI is not configured.");
+} else {
+    mongoose.connect(mongoURI)
+        .then(() => {
+            console.log("MongoDB connected successfully");
+        })
+        .catch((error) => {
+            console.error("MongoDB connection error:", error);
+        });
+}
 
-    db.run(`
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            email TEXT NOT NULL,
-            phone TEXT NOT NULL,
-            city TEXT,
-            business TEXT,
-            service TEXT NOT NULL,
-            project_details TEXT NOT NULL,
-            number_of_designs TEXT,
-            platform_size TEXT,
-            budget TEXT,
-            deadline TEXT,
-            additional_notes TEXT,
-            reference_file TEXT,
-            status TEXT DEFAULT 'New',
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-    `);
+
+// ========================================
+// USER MODEL
+// ========================================
+
+const userSchema = new mongoose.Schema({
+
+    name: {
+        type: String,
+        required: true
+    },
+
+    email: {
+        type: String,
+        required: true
+    },
+
+    phone: {
+        type: String,
+        required: true
+    },
+
+    city: String,
+
+    business: String,
+
+    service: {
+        type: String,
+        required: true
+    },
+
+    project_details: {
+        type: String,
+        required: true
+    },
+
+    number_of_designs: String,
+
+    platform_size: String,
+
+    budget: String,
+
+    deadline: String,
+
+    additional_notes: String,
+
+    reference_file: String,
+
+    status: {
+        type: String,
+        default: "New"
+    },
+
+    created_at: {
+        type: Date,
+        default: Date.now
+    }
 
 });
+
+const User = mongoose.model("User", userSchema);
 
 
 // ========================================
@@ -70,7 +119,7 @@ app.use(
         cookie: {
             httpOnly: true,
             sameSite: "lax",
-            secure: false
+            secure: process.env.NODE_ENV === "production"
         }
 
     })
@@ -92,11 +141,14 @@ app.use(
 // FILE UPLOAD
 // ========================================
 
+const uploadDirectory =
+    path.join(__dirname, "uploads");
+
 const storage = multer.diskStorage({
 
     destination: function (req, file, cb) {
 
-        cb(null, path.join(__dirname, "uploads"));
+        cb(null, uploadDirectory);
 
     },
 
@@ -116,7 +168,6 @@ const storage = multer.diskStorage({
     }
 
 });
-
 
 const upload = multer({
 
@@ -171,56 +222,11 @@ app.post(
     "/register",
     upload.single("reference"),
 
-    (req, res) => {
+    async (req, res) => {
 
-        const {
-            name,
-            email,
-            phone,
-            city,
-            business,
-            service,
-            project_details,
-            number_of_designs,
-            platform_size,
-            budget,
-            deadline,
-            additional_notes
-        } = req.body;
+        try {
 
-
-        const reference_file =
-            req.file
-                ? req.file.filename
-                : null;
-
-
-        // Required fields
-
-        if (
-            !name ||
-            !email ||
-            !phone ||
-            !service ||
-            !project_details
-        ) {
-
-            return res.status(400).json({
-
-                success: false,
-
-                message:
-                    "Please fill all required details."
-
-            });
-
-        }
-
-
-        const sql = `
-
-            INSERT INTO users (
-
+            const {
                 name,
                 email,
                 phone,
@@ -232,73 +238,107 @@ app.post(
                 platform_size,
                 budget,
                 deadline,
-                additional_notes,
-                reference_file
-
-            )
-
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-
-        `;
+                additional_notes
+            } = req.body;
 
 
-        db.run(
-
-            sql,
-
-            [
-
-                name,
-                email,
-                phone,
-                city || null,
-                business || null,
-                service,
-                project_details,
-                number_of_designs || null,
-                platform_size || null,
-                budget || null,
-                deadline || null,
-                additional_notes || null,
-                reference_file
-
-            ],
-
-            function (err) {
-
-                if (err) {
-
-                    console.error(
-                        "Database error:",
-                        err
-                    );
-
-                    return res.status(500).json({
-
-                        success: false,
-
-                        message:
-                            "Registration failed. Please try again."
-
-                    });
-
-                }
+            const reference_file =
+                req.file
+                    ? req.file.filename
+                    : null;
 
 
-                res.json({
+            if (
+                !name ||
+                !email ||
+                !phone ||
+                !service ||
+                !project_details
+            ) {
 
-                    success: true,
+                return res.status(400).json({
+
+                    success: false,
 
                     message:
-                        "Project request submitted successfully!",
-
-                    userId: this.lastID
+                        "Please fill all required details."
 
                 });
 
             }
 
-        );
+
+            const newUser = new User({
+
+                name,
+
+                email,
+
+                phone,
+
+                city:
+                    city || null,
+
+                business:
+                    business || null,
+
+                service,
+
+                project_details,
+
+                number_of_designs:
+                    number_of_designs || null,
+
+                platform_size:
+                    platform_size || null,
+
+                budget:
+                    budget || null,
+
+                deadline:
+                    deadline || null,
+
+                additional_notes:
+                    additional_notes || null,
+
+                reference_file
+
+            });
+
+
+            const savedUser =
+                await newUser.save();
+
+
+            res.json({
+
+                success: true,
+
+                message:
+                    "Project request submitted successfully!",
+
+                userId:
+                    savedUser._id
+
+            });
+
+        } catch (error) {
+
+            console.error(
+                "Registration error:",
+                error
+            );
+
+            res.status(500).json({
+
+                success: false,
+
+                message:
+                    "Registration failed. Please try again."
+
+            });
+
+        }
 
     }
 );
@@ -428,71 +468,43 @@ app.get(
     "/admin/users",
     requireAdmin,
 
-    (req, res) => {
+    async (req, res) => {
 
-        const sql = `
+        try {
 
-            SELECT
-
-                id,
-                name,
-                email,
-                phone,
-                city,
-                business,
-                service,
-                project_details,
-                number_of_designs,
-                platform_size,
-                budget,
-                deadline,
-                additional_notes,
-                reference_file,
-                status,
-                created_at
-
-            FROM users
-
-            ORDER BY created_at DESC
-
-        `;
+            const users =
+                await User.find()
+                    .sort({
+                        created_at: -1
+                    })
+                    .lean();
 
 
-        db.all(
-            sql,
-            [],
+            res.json({
 
-            (err, rows) => {
+                success: true,
 
-                if (err) {
+                users
 
-                    console.error(
-                        "Database error:",
-                        err
-                    );
+            });
 
-                    return res.status(500).json({
+        } catch (error) {
 
-                        success: false,
+            console.error(
+                "MongoDB error:",
+                error
+            );
 
-                        message:
-                            "Could not load project requests."
+            res.status(500).json({
 
-                    });
+                success: false,
 
-                }
+                message:
+                    "Could not load project requests."
 
+            });
 
-                res.json({
-
-                    success: true,
-
-                    users: rows
-
-                });
-
-            }
-        );
+        }
 
     }
 );
@@ -506,85 +518,97 @@ app.post(
     "/admin/users/:id/status",
     requireAdmin,
 
-    (req, res) => {
+    async (req, res) => {
 
-        const {
-            status
-        } = req.body;
+        try {
 
-
-        const allowedStatuses = [
-
-            "New",
-            "In Progress",
-            "Completed",
-            "Cancelled"
-
-        ];
+            const {
+                status
+            } = req.body;
 
 
-        if (
-            !allowedStatuses.includes(status)
-        ) {
+            const allowedStatuses = [
 
-            return res.status(400).json({
+                "New",
+                "In Progress",
+                "Completed",
+                "Cancelled"
 
-                success: false,
-
-                message:
-                    "Invalid status."
-
-            });
-
-        }
+            ];
 
 
-        db.run(
+            if (
+                !allowedStatuses.includes(status)
+            ) {
 
-            `
-            UPDATE users
-            SET status = ?
-            WHERE id = ?
-            `,
+                return res.status(400).json({
 
-            [
-                status,
-                req.params.id
-            ],
-
-            function (err) {
-
-                if (err) {
-
-                    console.error(
-                        "Status update error:",
-                        err
-                    );
-
-                    return res.status(500).json({
-
-                        success: false,
-
-                        message:
-                            "Could not update status."
-
-                    });
-
-                }
-
-
-                res.json({
-
-                    success: true,
+                    success: false,
 
                     message:
-                        "Status updated."
+                        "Invalid status."
 
                 });
 
             }
 
-        );
+
+            const updatedUser =
+                await User.findByIdAndUpdate(
+
+                    req.params.id,
+
+                    {
+                        status
+                    },
+
+                    {
+                        new: true
+                    }
+
+                );
+
+
+            if (!updatedUser) {
+
+                return res.status(404).json({
+
+                    success: false,
+
+                    message:
+                        "User not found."
+
+                });
+
+            }
+
+
+            res.json({
+
+                success: true,
+
+                message:
+                    "Status updated."
+
+            });
+
+        } catch (error) {
+
+            console.error(
+                "Status update error:",
+                error
+            );
+
+            res.status(500).json({
+
+                success: false,
+
+                message:
+                    "Could not update status."
+
+            });
+
+        }
 
     }
 );
@@ -651,6 +675,7 @@ app.get(
 
 
         res.sendFile(
+
             filePath,
 
             (err) => {
@@ -664,6 +689,7 @@ app.get(
                 }
 
             }
+
         );
 
     }
@@ -680,7 +706,7 @@ app.listen(
     () => {
 
         console.log(
-            `NG Artivo running at http://localhost:${PORT}`
+            `NG Artivo running on port ${PORT}`
         );
 
     }
