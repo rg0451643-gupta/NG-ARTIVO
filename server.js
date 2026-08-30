@@ -102,7 +102,14 @@ app.use(
 
 
 // ========================================
-// SESSION
+// RENDER / PROXY SETTINGS
+// ========================================
+
+app.set("trust proxy", 1);
+
+
+// ========================================
+// ADMIN SESSION
 // ========================================
 
 app.use(
@@ -116,10 +123,13 @@ app.use(
 
         saveUninitialized: false,
 
+        proxy: true,
+
         cookie: {
             httpOnly: true,
             sameSite: "lax",
-            secure: process.env.NODE_ENV === "production"
+            secure: true,
+            maxAge: 24 * 60 * 60 * 1000
         }
 
     })
@@ -241,12 +251,10 @@ app.post(
                 additional_notes
             } = req.body;
 
-
             const reference_file =
                 req.file
                     ? req.file.filename
                     : null;
-
 
             if (
                 !name ||
@@ -266,7 +274,6 @@ app.post(
                 });
 
             }
-
 
             const newUser = new User({
 
@@ -305,10 +312,8 @@ app.post(
 
             });
 
-
             const savedUser =
                 await newUser.save();
-
 
             res.json({
 
@@ -357,10 +362,8 @@ app.post(
             password
         } = req.body;
 
-
         const adminPassword =
             process.env.ADMIN_PASSWORD;
-
 
         if (!adminPassword) {
 
@@ -374,7 +377,6 @@ app.post(
             });
 
         }
-
 
         if (
             !password ||
@@ -392,16 +394,36 @@ app.post(
 
         }
 
-
         req.session.isAdmin = true;
 
+        req.session.save((error) => {
 
-        res.json({
+            if (error) {
 
-            success: true,
+                console.error(
+                    "Session save error:",
+                    error
+                );
 
-            message:
-                "Admin login successful."
+                return res.status(500).json({
+
+                    success: false,
+
+                    message:
+                        "Could not create admin session."
+
+                });
+
+            }
+
+            res.json({
+
+                success: true,
+
+                message:
+                    "Admin login successful."
+
+            });
 
         });
 
@@ -423,7 +445,6 @@ function requireAdmin(req, res, next) {
         return next();
 
     }
-
 
     return res.status(401).json({
 
@@ -479,7 +500,6 @@ app.get(
                     })
                     .lean();
 
-
             res.json({
 
                 success: true,
@@ -526,7 +546,6 @@ app.post(
                 status
             } = req.body;
 
-
             const allowedStatuses = [
 
                 "New",
@@ -535,7 +554,6 @@ app.post(
                 "Cancelled"
 
             ];
-
 
             if (
                 !allowedStatuses.includes(status)
@@ -552,7 +570,6 @@ app.post(
 
             }
 
-
             const updatedUser =
                 await User.findByIdAndUpdate(
 
@@ -568,7 +585,6 @@ app.post(
 
                 );
 
-
             if (!updatedUser) {
 
                 return res.status(404).json({
@@ -581,7 +597,6 @@ app.post(
                 });
 
             }
-
 
             res.json({
 
@@ -636,6 +651,7 @@ app.post(
 
                 }
 
+                res.clearCookie("connect.sid");
 
                 res.json({
 
@@ -665,14 +681,12 @@ app.get(
                 req.params.filename
             );
 
-
         const filePath =
             path.join(
                 __dirname,
                 "uploads",
                 filename
             );
-
 
         res.sendFile(
 
